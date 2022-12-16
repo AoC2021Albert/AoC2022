@@ -5,6 +5,7 @@ from functools import cache
 from sys import stdin
 from pprint import pprint
 import re
+from itertools import combinations
 
 f = open("in.raw", "r")
 lines = f.read().splitlines()
@@ -39,24 +40,41 @@ pprint(d)
 d = {oldk:{sk:sv for sk, sv in oldv.items() if sk in rates.keys() and sv !=0 } for oldk, oldv in d.items() if oldk in rates.keys() or oldk=="AA"}
 pprint(d)
 
-result = 0
-def findsolutions(walked, remainingtime, flow, accumulated):
-    global result, resultpath
+def findsolutions(result, walked, remainingtime, flow, accumulated, allowed):
     if flow*remainingtime + accumulated > result:
         result = flow*remainingtime + accumulated
     for next, dist in d[walked[-1]].items():
-        if next not in walked and dist + 1 < remainingtime:
+        if next not in walked and next in allowed and dist + 1 < remainingtime:
             #we can go and open
             walked.append(next)
-            findsolutions(walked, remainingtime - dist - 1, flow + rates[next], accumulated + flow * (dist + 1))
+            newr = findsolutions(result,walked, remainingtime - dist - 1, flow + rates[next], accumulated + flow * (dist + 1), allowed)
+            if newr > result:
+                result = newr
             walked.pop()
+    return(result)
 
-findsolutions(["AA"], 30, 0,0)
-
-print(result)
+print("Part 1:", findsolutions(0,["AA"], 30, 0,0, list(rates.keys())))
 
 # PART 2
 result = 0
+iteration = 0
+#all possible groupings of 2 for the places with valves
+allvalves=set(rates.keys())
+tested = set()
+for l in range(1,len(allvalves)):
+    for mycombination in combinations(allvalves, l):
+        print(iteration, mycombination, result)
+        iteration+=1
+        if mycombination not in tested:
+            tested.add(frozenset(mycombination))
+            elecombination = allvalves - set(mycombination)
+            tested.add(frozenset(elecombination))
+            newresult = findsolutions(0,["AA"], 26, 0,0, mycombination) + \
+                        findsolutions(0,["AA"], 26, 0,0, elecombination)
+            result = max(result, newresult)
 
+
+
+        
 
 print(result)
