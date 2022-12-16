@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 from collections import defaultdict
-from copy import deepcopy
-from functools import cache
-from sys import stdin
-from pprint import pprint
-import re
 from itertools import combinations
+import re
 
 f = open("in.raw", "r")
 lines = f.read().splitlines()
@@ -17,8 +13,6 @@ for line in lines:
     tunnels[valve] = {k:1 for k in dest.split(', ')}
     if rate != "0" :
         rates[valve] = int(rate)
-pprint(tunnels)
-pprint(rates)
 # calculate distances
 # d is distnace table
 def getalldist(d, walked):
@@ -35,10 +29,10 @@ getalldist(d,["AA"])
 for k in rates: #only interested in places with valves
     d[k][k] = 0
     getalldist(d, [k])
-pprint(d)
+
 # only interested on distances between valves
 d = {oldk:{sk:sv for sk, sv in oldv.items() if sk in rates.keys() and sv !=0 } for oldk, oldv in d.items() if oldk in rates.keys() or oldk=="AA"}
-pprint(d)
+
 
 def findsolutions(result, walked, remainingtime, flow, accumulated, allowed):
     if flow*remainingtime + accumulated > result:
@@ -63,7 +57,6 @@ allvalves=set(rates.keys())
 tested = set()
 for l in range(1,len(allvalves)):
     for mycombination in combinations(allvalves, l):
-        print(iteration, mycombination, result)
         iteration+=1
         if mycombination not in tested:
             tested.add(frozenset(mycombination))
@@ -73,8 +66,4 @@ for l in range(1,len(allvalves)):
                         findsolutions(0,["AA"], 26, 0,0, elecombination)
             result = max(result, newresult)
 
-
-
-        
-
-print(result)
+print("Part 2", result)
