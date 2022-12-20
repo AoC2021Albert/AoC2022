@@ -15,7 +15,7 @@ class Dll:
         return(f'{self.prev.value}<{self.value}>{self.next.value}')
 
     def moveforward(self, n):
-        for _ in range(n):
+        for _ in range(n * 811589153 % LENL):
             mynext = self.next
             myprev = self.prev
             mynextnext = self.next.next
@@ -27,7 +27,7 @@ class Dll:
             mynext.next = self
             
     def movebackward(self, n):
-        for _ in range(n):
+        for _ in range(n * 811589153 % LENL ):
             mynext = self.next
             myprev = self.prev
             myprevprev = self.prev.prev
@@ -43,10 +43,11 @@ class Dll:
 f = open("in.raw", "r")
 lines = f.read().splitlines()
 
-# PART 1
+# PART 2
 result = 0
 l = []
 v0 = None
+LENL = len(lines) -1
 for line in lines:
     value = int(line)
     v = Dll(value)
@@ -57,12 +58,13 @@ for line in lines:
 for i in range(len(l)):
     l[i].prev=l[(i-1) % len(l)]
     l[i].next=l[(i+1 )% len(l)]
-    
-for v in l:
-    if v.value > 0 :
-        v.moveforward(v.value)
-    if v.value < 0 :
-        v.movebackward(-v.value)
+
+for _ in range(10):
+    for v in l:
+        if v.value > 0 :
+            v.moveforward(v.value)
+        if v.value < 0 :
+            v.movebackward(-v.value)
 
 newl = [0]
 curv = v0.next
@@ -72,8 +74,8 @@ while curv.value != 0:
 
 for k in 1000, 2000, 3000:
     num = newl[k % len(newl)]
-    print(num)
-    result+=num
+    print(num * 811589153)
+    result+=num* 811589153
 print(result)
 
 # PART 2
