@@ -5,7 +5,7 @@ from functools import cache
 from sys import stdin
 from pprint import pprint
 
-f = open("in.raw", "r")
+f = open("test.raw", "r")
 lines = f.read().splitlines()
 
 Y=0
@@ -66,11 +66,15 @@ dirs=[
 
 printmap(elfs)
 pprint(dirs)
-for _ in range(10):
-    elfs = move(elfs, dirs)
-    printmap(elfs)
+for i in range(100000):
+    newelfs = move(elfs, dirs)
+    if len(newelfs.difference(elfs))==0:
+        print(i)
+        exit()
+    #printmap(elfs)
     dirs=dirs[1:]+dirs[:1]
-    pprint(dirs)
+    #pprint(dirs)
+    elfs=newelfs
 
 
 maxx=-999999999999
